@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+    <title>Import JavaScript</title>
+    <script src='https://cdn.plot.ly/plotly-2.27.0.min.js'></script>
+
+</head>
+<body>
+<!-- How many years until you will start taking benefits?
+<div class="slidecontainer">
+    <input type="range" min="5" max="30" value="10" class="slider" id="yearStart" oninput="yearStartValue.innerText = this.value">
+    <span id="yearStartValue">10</span>
+  </div>
+<p></p> -->
+At what % rate do you expect premiums to increase annually for the options with 5% inflation benefit? (they say 38% currently)
+  <div class="slidecontainer">
+    <input type="range" min="5" max="15" value="5" class="slider" id="rateInflation" oninput="rateInflationValue.innerText = this.value + '%'">
+    <span id="rateInflationValue">5%</span>
+  </div>
+  <p></p>
+
+  At what % rate do you expect premiums to increase annually for the options without inflation benefit? (they say 0% currently)
+  <div class="slidecontainer">
+    <input type="range" min="10" max="38" value="10" class="slider" id="rateInflationI" oninput="rateInflationNoInflation.innerText = this.value + '%'">
+    <span id="rateInflationNoInflation">10%</span>
+  </div>
+  <p></p>
+
+What inflation rate do you want to use (how much more useful is money now than money next year)?
+  <div class="slidecontainer">
+    <input type="range" min="0" max="10" value="5" class="slider" id="discountRate" oninput="discountRateValue.innerText = this.value+ '%'">
+    <span id="discountRateValue">5%</span>
+  </div>
+
+<div id='lineChart'>    </div>
+
+<script src="future_value.js"></script>
+
+<!-- Make a refresh button -->
+<button onclick="refreshGraph()">Plot results</button>
+
+</body>
+</html>
+
