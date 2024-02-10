@@ -8,7 +8,7 @@
 function calculatePresentValueFixed(periodPayment, numPeriods, periodsPerYear, discountRate) {
   let presentValue = 0;
   for (let i = 0; i < numPeriods; i++) {
-    presentValue += periodPayment / Math.pow(1 + discountRate/periodsPerYear, i + 1);
+    presentValue += periodPayment / Math.pow(1 + discountRate/periodsPerYear, i);
   }
   return presentValue;
 }
@@ -24,7 +24,7 @@ function calculatePresentValueFixed(periodPayment, numPeriods, periodsPerYear, d
 function calculatePresentValue(incomeStream, periodsPerYear, discountRate) {
     let presentValue = 0;
     for (let i = 0; i < incomeStream.length; i++) {
-      presentValue += incomeStream[i] / Math.pow(1 + discountRate/periodsPerYear, i + 1);
+      presentValue += incomeStream[i] / Math.pow(1 + discountRate/periodsPerYear, i);
     }
     return presentValue;
   }
@@ -76,25 +76,28 @@ function generatePayoutSequence(monthlyBenefit, yearStart, yearDuration = 8, inf
 }
 
 function getOverallValue(semiannualPremium, rateInflation, discountRate, monthlyBenefit, yearStart, yearDuration, inflationBenefit, compound, cashBonus=0) {
-  let semiannualPremiums = generatePremiumSequence(semiannualPremium, numYears=yearStart+yearDuration, rateInflation=rateInflation);
-  let payoutSequence = generatePayoutSequence(monthlyBenefit, yearStart, yearDuration, inflationBenefit, compound);
-  let overallValue = calculatePresentValue(payoutSequence, 12, discountRate) - calculatePresentValue(semiannualPremiums, 2, discountRate) + cashBonus;
+  let semiannualPremiums = generatePremiumSequence(semiannualPremium, numYears=yearStart-1+yearDuration, rateInflation=rateInflation);
+  let payoutSequence = generatePayoutSequence(monthlyBenefit, yearStart-1, yearDuration, inflationBenefit, compound);
+  let a = calculatePresentValue(payoutSequence, 1, discountRate)
+  let b = calculatePresentValue(semiannualPremiums, 1, discountRate)
+  // console.log(a,b)
+  let overallValue = a - b + cashBonus;
   return overallValue;
 }
 // var yearStart = document.getElementById("yearStart");
-var rateInflationV = document.getElementById("rateInflation");
-var rateInflationI = document.getElementById("rateInflationI");
+var rateGrowthInflation = document.getElementById("rateGrowthInflation");
+var rateGrowthNoInflation = document.getElementById("rateGrowthNoInflation");
 
 var discountRateV = document.getElementById("discountRate");
 
 const years = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30];
-
+// const years = [1]
 
 function refreshGraph() {
   
 var current = {
     x: years,
-    y: years.map((x) => (getOverallValue(semiannualPremium=1745.46, rateInflation=rateInflationI.value/100, discountRate=discountRateV.value/100, monthlyBenefit=6650, yearStart=x, yearDuration=8, inflationBenefit=0.05, compound=false, cashBonus=0))),
+    y: years.map((x) => (getOverallValue(semiannualPremium=1745.46, rateInflation=rateGrowthNoInflation.value/100, discountRate=discountRateV.value/100, monthlyBenefit=6650, yearStart=x, yearDuration=8, inflationBenefit=0.05, compound=false, cashBonus=0))),
     mode: 'lines',
     name: 'Current',
   };
@@ -102,7 +105,7 @@ var current = {
 
   var option1 = {
     x: years,
-    y: years.map((x) => (getOverallValue(semiannualPremium=0, rateInflation=rateInflationV.value/100, discountRate=discountRateV.value/100, monthlyBenefit=62142.66/96, yearStart=x, yearDuration=8, inflationBenefit=0, compound=false, cashBonus=0))),
+    y: years.map((x) => (getOverallValue(semiannualPremium=0, rateInflation=rateGrowthInflation.value/100, discountRate=discountRateV.value/100, monthlyBenefit=62142.66/96, yearStart=x, yearDuration=8, inflationBenefit=0, compound=false, cashBonus=0))),
     mode: 'lines',
     name: 'Option 1',
   };
@@ -110,41 +113,43 @@ var current = {
 
   var option2 = {
     x: years,
-    y: years.map((x) => (getOverallValue(semiannualPremium=0, rateInflation=rateInflationV.value/100, discountRate=discountRateV.value/100, monthlyBenefit=31428.44/96, yearStart=x, yearDuration=8, inflationBenefit=0, compound=false, cashBonus=10000))),
+    y: years.map((x) => (getOverallValue(semiannualPremium=0, rateInflation=rateGrowthInflation.value/100, discountRate=discountRateV.value/100, monthlyBenefit=31428.44/96, yearStart=x, yearDuration=8, inflationBenefit=0, compound=false, cashBonus=10000))),
     mode: 'lines',
     name: 'Option 2',
   };
 
   var option3 = {
     x: years,
-    y: years.map((x) => (getOverallValue(semiannualPremium=1110.73, rateInflation=rateInflationV.value/100, discountRate=discountRateV.value/100, monthlyBenefit=3500, yearStart=x, yearDuration=8, inflationBenefit=0, compound=false, cashBonus=6000))),
+    y: years.map((x) => (getOverallValue(semiannualPremium=1110.73, rateInflation=rateGrowthNoInflation.value/100, discountRate=discountRateV.value/100, monthlyBenefit=3500, yearStart=x, yearDuration=8, inflationBenefit=0, compound=false, cashBonus=6000))),
     mode: 'lines',
     name: 'Option 3',
   };
   var option4 = {
     x: years,
-    y: years.map((x) => (getOverallValue(semiannualPremium=1687.96, rateInflation=rateInflationV.value/100, discountRate=discountRateV.value/100, monthlyBenefit=6650, yearStart=x, yearDuration=4, inflationBenefit=0, compound=false, cashBonus=6000))),
+    y: years.map((x) => (getOverallValue(semiannualPremium=1687.96, rateInflation=rateGrowthNoInflation.value/100, discountRate=discountRateV.value/100, monthlyBenefit=6650, yearStart=x, yearDuration=4, inflationBenefit=0, compound=false, cashBonus=6000))),
     mode: 'lines',
     name: 'Option 4',
   };
 
   var option5 = {
     x: years,
-    y: years.map((x) => (getOverallValue(semiannualPremium=1309.10, rateInflation=rateInflationI.value/100, discountRate=discountRateV.value/100, monthlyBenefit=4987.50, yearStart=x, yearDuration=8, inflationBenefit=0.05, compound=false, cashBonus=1200))),
+    y: years.map((x) => (getOverallValue(semiannualPremium=1309.10, rateInflation=rateGrowthNoInflation.value/100, discountRate=discountRateV.value/100, monthlyBenefit=4987.50, yearStart=x, yearDuration=8, inflationBenefit=0.05, compound=false, cashBonus=1200))),
     mode: 'lines',
     name: 'Option 5',
   };
 
   var option6 = {
     x: years,
-    y: years.map((x) => (getOverallValue(semiannualPremium=1192.98, rateInflation=rateInflationV.value/100, discountRate=discountRateV.value/100, monthlyBenefit=4186.50, yearStart=x, yearDuration=8, inflationBenefit=0.01, compound=true, cashBonus=6000))),
+    y: years.map((x) => (getOverallValue(semiannualPremium=1192.98, rateInflation=rateGrowthNoInflation.value/100, discountRate=discountRateV.value/100, monthlyBenefit=4186.50, yearStart=x, yearDuration=8, inflationBenefit=0.01, compound=true, cashBonus=6000))),
     mode: 'lines',
     name: 'Option 6',
   };
     
   var data = [current, option1, option2, option3, option4, option5, option6];
-  
-  Plotly.newPlot('lineChart', data);
+  // Plotly snap to integer points
+
+  Plotly.newPlot('lineChart', data, layout = { hovermode: 'closest' });
+
 
 }
 
